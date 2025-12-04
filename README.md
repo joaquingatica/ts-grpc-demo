@@ -6,7 +6,7 @@ with TypeScript.
 ## Features
 
 - TypeScript for client and server:
-  - `nice-grpc`([npm][nice-grpc-npm])
+  - `nice-grpc`([npm][nice-grpc-npm]) for the main gRPC client and server
 - Schema-first protobuf definitions with code generation
   - `ts-proto` ([npm][ts-proto-npm]) for TypeScript codegen
   - `@bufbuild/buf` ([npm][bufbuild-buf-npm]) for CLI build using `ts-proto`
@@ -20,13 +20,13 @@ with TypeScript.
   - `@bufbuild/buf` ([npm][bufbuild-buf-npm]) for CLI client codegen from reflection binaries
 - Server health check procedures
   - `nice-grpc-server-health` ([npm][nice-grpc-server-health-npm]) for implementation of [gRPC health v1][health-v1-procedures] standard
-- Server middlewares:
+- Server middlewares
   - `nice-grpc-server-terminator` ([npm][nice-grpc-server-middleware-terminator-npm]) to facilitate server graceful shutdown
-- Client middlewares:
+- Client middlewares
   - `nice-grpc-client-middleware-deadline` ([npm][nice-grpc-client-middleware-deadline-npm]) for cancelling calls upon deadlines
   - `nice-grpc-client-middleware-retry` ([npm][nice-grpc-client-middleware-retry-npm]) for automatic retries to idempotent calls
 - OpenTelemetry tracing
-  - `nice-grpc-opentelemetry` for server tracing with OpenTelemetry instrumentation
+  - `nice-grpc-opentelemetry` ([npm][nice-grpc-opentelemetry-npm]) for server tracing with OpenTelemetry instrumentation
 
 ## Requirements
 

@@ -2,7 +2,7 @@
   "name": "@ts-grpc-demo/client",
   "version": "1.0.0",
   "description": "TypeScript gRPC demo client",
-  "author": "Joaquin Gatica <joaquin@gatica.dev>",
+  "author": "Joaquin Gatica <me@joaquingatica.com>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/joaquingatica/ts-grpc-demo.git"
