@@ -34,6 +34,17 @@ export interface CreateCharacterResponse {
   character: Character | undefined
 }
 
+export interface UpdateCharacterRequest {
+  id: string
+  name: string
+  people: People
+  alive: boolean
+}
+
+export interface UpdateCharacterResponse {
+  character: Character | undefined
+}
+
 export interface DeleteCharacterRequest {
   id: string
 }
@@ -374,6 +385,173 @@ export const CreateCharacterResponse: MessageFns<CreateCharacterResponse> = {
   },
 }
 
+function createBaseUpdateCharacterRequest(): UpdateCharacterRequest {
+  return { id: '', name: '', people: 0, alive: false }
+}
+
+export const UpdateCharacterRequest: MessageFns<UpdateCharacterRequest> = {
+  encode(message: UpdateCharacterRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.id !== '') {
+      writer.uint32(10).string(message.id)
+    }
+    if (message.name !== '') {
+      writer.uint32(18).string(message.name)
+    }
+    if (message.people !== 0) {
+      writer.uint32(24).int32(message.people)
+    }
+    if (message.alive !== false) {
+      writer.uint32(32).bool(message.alive)
+    }
+    return writer
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): UpdateCharacterRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input)
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = createBaseUpdateCharacterRequest()
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break
+          }
+
+          message.id = reader.string()
+          continue
+        case 2:
+          if (tag !== 18) {
+            break
+          }
+
+          message.name = reader.string()
+          continue
+        case 3:
+          if (tag !== 24) {
+            break
+          }
+
+          message.people = reader.int32() as any
+          continue
+        case 4:
+          if (tag !== 32) {
+            break
+          }
+
+          message.alive = reader.bool()
+          continue
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break
+      }
+      reader.skip(tag & 7)
+    }
+    return message
+  },
+
+  fromJSON(object: any): UpdateCharacterRequest {
+    return {
+      id: isSet(object.id) ? globalThis.String(object.id) : '',
+      name: isSet(object.name) ? globalThis.String(object.name) : '',
+      people: isSet(object.people) ? peopleFromJSON(object.people) : 0,
+      alive: isSet(object.alive) ? globalThis.Boolean(object.alive) : false,
+    }
+  },
+
+  toJSON(message: UpdateCharacterRequest): unknown {
+    const obj: any = {}
+    if (message.id !== '') {
+      obj.id = message.id
+    }
+    if (message.name !== '') {
+      obj.name = message.name
+    }
+    if (message.people !== 0) {
+      obj.people = peopleToJSON(message.people)
+    }
+    if (message.alive !== false) {
+      obj.alive = message.alive
+    }
+    return obj
+  },
+
+  create(base?: DeepPartial<UpdateCharacterRequest>): UpdateCharacterRequest {
+    return UpdateCharacterRequest.fromPartial(base ?? {})
+  },
+  fromPartial(object: DeepPartial<UpdateCharacterRequest>): UpdateCharacterRequest {
+    const message = createBaseUpdateCharacterRequest()
+    message.id = object.id ?? ''
+    message.name = object.name ?? ''
+    message.people = object.people ?? 0
+    message.alive = object.alive ?? false
+    return message
+  },
+}
+
+function createBaseUpdateCharacterResponse(): UpdateCharacterResponse {
+  return { character: undefined }
+}
+
+export const UpdateCharacterResponse: MessageFns<UpdateCharacterResponse> = {
+  encode(
+    message: UpdateCharacterResponse,
+    writer: BinaryWriter = new BinaryWriter(),
+  ): BinaryWriter {
+    if (message.character !== undefined) {
+      Character.encode(message.character, writer.uint32(10).fork()).join()
+    }
+    return writer
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): UpdateCharacterResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input)
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = createBaseUpdateCharacterResponse()
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          if (tag !== 10) {
+            break
+          }
+
+          message.character = Character.decode(reader, reader.uint32())
+          continue
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break
+      }
+      reader.skip(tag & 7)
+    }
+    return message
+  },
+
+  fromJSON(object: any): UpdateCharacterResponse {
+    return { character: isSet(object.character) ? Character.fromJSON(object.character) : undefined }
+  },
+
+  toJSON(message: UpdateCharacterResponse): unknown {
+    const obj: any = {}
+    if (message.character !== undefined) {
+      obj.character = Character.toJSON(message.character)
+    }
+    return obj
+  },
+
+  create(base?: DeepPartial<UpdateCharacterResponse>): UpdateCharacterResponse {
+    return UpdateCharacterResponse.fromPartial(base ?? {})
+  },
+  fromPartial(object: DeepPartial<UpdateCharacterResponse>): UpdateCharacterResponse {
+    const message = createBaseUpdateCharacterResponse()
+    message.character =
+      object.character !== undefined && object.character !== null
+        ? Character.fromPartial(object.character)
+        : undefined
+    return message
+  },
+}
+
 function createBaseDeleteCharacterRequest(): DeleteCharacterRequest {
   return { id: '' }
 }
@@ -512,6 +690,14 @@ export const CharacterServiceDefinition = {
       responseStream: false,
       options: {},
     },
+    updateCharacter: {
+      name: 'UpdateCharacter',
+      requestType: UpdateCharacterRequest,
+      requestStream: false,
+      responseType: UpdateCharacterResponse,
+      responseStream: false,
+      options: {},
+    },
     deleteCharacter: {
       name: 'DeleteCharacter',
       requestType: DeleteCharacterRequest,
@@ -532,6 +718,10 @@ export interface CharacterServiceImplementation<CallContextExt = {}> {
     request: CreateCharacterRequest,
     context: CallContext & CallContextExt,
   ): Promise<DeepPartial<CreateCharacterResponse>>
+  updateCharacter(
+    request: UpdateCharacterRequest,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<UpdateCharacterResponse>>
   deleteCharacter(
     request: DeleteCharacterRequest,
     context: CallContext & CallContextExt,
@@ -547,6 +737,10 @@ export interface CharacterServiceClient<CallOptionsExt = {}> {
     request: DeepPartial<CreateCharacterRequest>,
     options?: CallOptions & CallOptionsExt,
   ): Promise<CreateCharacterResponse>
+  updateCharacter(
+    request: DeepPartial<UpdateCharacterRequest>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<UpdateCharacterResponse>
   deleteCharacter(
     request: DeepPartial<DeleteCharacterRequest>,
     options?: CallOptions & CallOptionsExt,

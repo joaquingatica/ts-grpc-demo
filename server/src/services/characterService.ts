@@ -9,6 +9,8 @@ import {
   DeleteCharacterRequest,
   DeleteCharacterResponse,
   GetCharactersResponse,
+  UpdateCharacterRequest,
+  UpdateCharacterResponse,
 } from '../proto/gatica/middleearth/v1/character_service'
 
 export const characterService: CharacterServiceImplementation = {
@@ -24,6 +26,21 @@ export const characterService: CharacterServiceImplementation = {
     alive,
   }: CreateCharacterRequest): Promise<DeepPartial<CreateCharacterResponse>> => {
     const character = charactersData.create({ name, people, alive })
+    return {
+      character,
+    }
+  },
+
+  updateCharacter: async ({
+    id,
+    name,
+    people,
+    alive,
+  }: UpdateCharacterRequest): Promise<DeepPartial<UpdateCharacterResponse>> => {
+    const character = charactersData.update({ id, name, people, alive })
+    if (!character) {
+      throw new ServerError(Status.NOT_FOUND, `Character not found for id ${id}`)
+    }
     return {
       character,
     }
